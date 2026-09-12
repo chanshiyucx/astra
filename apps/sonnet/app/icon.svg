@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="2 2 44 44" fill="none">
+  <title>Sonnet — a page becoming a star</title>
+  <style>
+    svg { color: #b4637a; }
+    @media (prefers-color-scheme: dark) {
+      svg { color: #ebbcba; }
+    }
+  </style>
+  <g stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M22 8H13a3 3 0 0 0-3 3v26a3 3 0 0 0 3 3h20a3 3 0 0 0 3-3v-9"/>
+    <path d="M31 6c0 5-5 10-10 10 5 0 10 5 10 10 0-5 5-10 10-10-5 0-10-5-10-10Z"/>
+  </g>
+</svg>
