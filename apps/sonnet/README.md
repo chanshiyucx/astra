@@ -1,28 +1,25 @@
-## Getting Started
+# Sonnet
 
-First, run the development server:
+公开的英语笔记阅读页，使用 Rosé Pine Dawn / Moon 明暗配色。
 
-```bash
-yarn dev
+从仓库根目录启动：
+
+```sh
+pnpm dev:sonnet
 ```
 
-Open [http://localhost:3001](http://localhost:3001) with your browser to see the result.
+访问 http://localhost:3001。服务端通过 GitHub Contents API 读取 `chanshiyucx/obsidian` 的 `main` 分支中的 `Polyglot/English/Writing/002-Daily.md`，不再读取本地 Markdown。
 
-You can start editing the page by modifying `src/app/page.tsx`. The page auto-updates as you edit the file.
+复制 `.env.example` 为 `.env.local` 并填写 `GITHUB_TOKEN`（已有配置无需覆盖）。Token 仅需目标仓库的 Contents 只读权限。部署到 Vercel 时，在 Sonnet 项目的环境变量中配置同名变量。
 
-To create [API routes](https://nextjs.org/docs/app/building-your-application/routing/router-handlers) add an `api/` directory to the `app/` directory with a `route.ts` file. For individual endpoints, create a subfolder in the `api` directory, like `api/hello/route.ts` would map to [http://localhost:3001/api/hello](http://localhost:3001/api/hello).
+`lib/notes.ts` 使用 `server-only` 隔离凭证，固定允许读取的文件路径，设置 10 秒请求超时。`next: { revalidate: 60 }` 启用 Next.js Data Cache，页面也可由 Next.js 静态生成并增量更新。同一缓存有效期内复用 GitHub 响应。构建首次生成页面时需要有效 Token 和 GitHub 网络访问。
 
-## Learn More
+页面恢复到前台、从浏览器往返缓存恢复或重新联网时，通过 `router.refresh()` 请求服务端页面，保留滚动位置和主题状态。60 秒内重复恢复不会刷新；隐藏或离线时不发起刷新，没有定时轮询和手动更新入口。
 
-To learn more about Next.js, take a look at the following resources:
+缓存采用 stale-while-revalidate：过期后的首次请求可能仍返回旧内容并在后台更新，后续请求使用更新后的缓存，因此 60 秒不是内容可见性的硬性上限。自动刷新不主动清除缓存，持续停留前台也不会自动轮询。GitHub 暂时不可用时，后台重新验证失败可继续保留上次成功的缓存。失败时显示通用提示和重试按钮，不将上游错误详情显示给读者。
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn/foundations/about-nextjs) - an interactive Next.js tutorial.
+`components/markdown.tsx` 负责渲染，与数据源解耦。
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+支持标准 Markdown 标题、列表、引用、链接、代码和文档中的 `[!NOTE]` 提示。原始 HTML 不渲染，暂不支持表格、双链、嵌入附件和语法高亮。
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_source=github.com&utm_medium=referral&utm_campaign=turborepo-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+共享颜色定义在 `packages/tailwind-config/shared-styles.css`。默认跟随系统明暗偏好；在 `html` 上设置 `data-theme="light"` 或 `data-theme="dark"` 可显式指定主题。
