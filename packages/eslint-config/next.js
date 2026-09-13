@@ -1,46 +1,6 @@
-import { globalIgnores } from "eslint/config";
-import pluginReactHooks from "eslint-plugin-react-hooks";
-import globals from "globals";
-import pluginNext from "@next/eslint-plugin-next";
+import nextVitals from "eslint-config-next/core-web-vitals";
+import prettier from "eslint-config-prettier/flat";
 import { config as baseConfig } from "./base.js";
 
-/**
- * A custom ESLint configuration for libraries that use Next.js.
- *
- * @type {import("eslint").Linter.Config[]}
- * */
-export const nextJsConfig = [
-  ...baseConfig,
-  globalIgnores([
-    // Default ignores of eslint-config-next:
-    ".next/**",
-    "out/**",
-    "build/**",
-    "next-env.d.ts",
-  ]),
-  {
-    languageOptions: {
-      globals: {
-        ...globals.browser,
-        ...globals.serviceworker,
-      },
-    },
-  },
-  {
-    plugins: {
-      "@next/next": pluginNext,
-    },
-    rules: {
-      ...pluginNext.configs.recommended.rules,
-      ...pluginNext.configs["core-web-vitals"].rules,
-    },
-  },
-  {
-    plugins: {
-      "react-hooks": pluginReactHooks,
-    },
-    rules: {
-      ...pluginReactHooks.configs.recommended.rules,
-    },
-  },
-];
+/** @type {import("eslint").Linter.Config[]} */
+export const nextJsConfig = [...baseConfig, ...nextVitals, prettier];
